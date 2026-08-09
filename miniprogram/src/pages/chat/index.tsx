@@ -1,6 +1,12 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Textarea, ScrollView, Button, Picker } from '@tarojs/components'
+import { View, Text, ScrollView } from '@tarojs/components'
+import {
+  Picker,
+  TextArea,
+  Cell,
+  CellGroup
+} from '@nutui/nutui-react-taro'
 import { startChat, type ChatHandle } from '../../lib/ai-client'
 import { getAllSkills } from '../../lib/skills'
 import { listChats, saveChat, deleteChat } from '../../lib/storage'
@@ -9,7 +15,7 @@ import { Markdown } from '../../lib/markdown'
 import { genId } from '../../lib/date'
 import { useTheme } from '../../lib/theme'
 import { Icon } from '../../components/ui/Icon'
-import { Empty } from '../../components/ui'
+import { Badge, Button, Empty } from '../../components/ui'
 import type { ChatMessage, ChatSession, Skill } from '../../lib/types'
 
 function buildSkillSystem(skill: Skill | null): string {
@@ -127,8 +133,7 @@ export default function ChatPage() {
     setStatus('')
   }
 
-  const skillPickerRange = ['通用助手（无技能）', ...skills.map((s) => s.name)]
-  const skillPickerIndex = skillId ? skills.findIndex((s) => s.id === skillId) + 1 : 0
+  const skillOptions = [{ label: '通用助手（无技能）', value: '' }, ...skills.map((s) => ({ label: s.name, value: s.id }))]
 
   const send = (): void => {
     const text = input.trim()
@@ -215,66 +220,71 @@ export default function ChatPage() {
     })
   }
 
+  const skillPickerValue = skillId ? skillOptions.findIndex((c) => c.value === skillId) : 0
+
   return (
     <View className={`chat-page ${themeClass}`}>
       {/* 顶部工具条 */}
       <View className='chat-toolbar'>
-        <Button className='btn btn-outline btn-sm' onClick={() => setShowSessions(!showSessions)}>
-          <Icon name='journal-text' size={26} color='#6d5ce7' className='btn-icon' />
+        <Button size='small' type='primary' plain onClick={() => setShowSessions(!showSessions)}>
           {showSessions ? '收起' : '会话'}（{sessions.length}）
         </Button>
-        <View className='flex items-center gap-sm'>
-          <Text className='text-sm'>技能</Text>
-          <Picker mode='selector' range={skillPickerRange} value={skillPickerIndex} onChange={(e) => switchSkill(Number(e.detail.value))}>
-            <View className='skill-picker'>
-              <Text className='skill-picker-text'>{skillPickerRange[skillPickerIndex] || '选择技能'}</Text>
-              <Icon name='chevron-down' size={22} color='#9ca3af' />
-            </View>
-          </Picker>
-        </View>
+        <Picker
+          title='选择技能'
+          options={[skillOptions]}
+          value={[skillOptions[skillPickerValue]?.value ?? '']}
+          onConfirm={(opts) => {
+            const v = (opts[0] as { value?: string })?.value ?? ''
+            if (!streaming) {
+              setSkillId(v)
+              setMessages([])
+              setStatus('')
+            }
+          }}
+        >
+          <View className='skill-picker'>
+            <Text className='skill-picker-text'>
+              {skillOptions[skillPickerValue]?.label || '选择技能'}
+            </Text>
+            <Icon name='chevron-down' size={22} color='#9ca3af' />
+          </View>
+        </Picker>
         <View className='flex-1' />
         {streaming ? (
-          <Button className='btn btn-outline btn-sm' onClick={stop}>
-            <Icon name='stop-circle' size={26} color='#6d5ce7' className='btn-icon' />
-            停止
-          </Button>
+          <Button size='small' type='primary' onClick={stop}>停止</Button>
         ) : (
-          <Button className='btn btn-ghost btn-sm' onClick={() => { if (!streaming) { setMessages([]); setStatus('') } }}>
-            <Icon name='trash' size={24} color='#ef4444' />
+          <Button size='small' type='default' onClick={() => { if (!streaming) { setMessages([]); setStatus('') } }}>
             清空
           </Button>
         )}
         {messages.length > 0 && !streaming && (
-          <Button className='btn btn-ghost btn-sm' onClick={() => void doExportChat()}>
-            <Icon name='download' size={24} color='#6d5ce7' />
-            导出
-          </Button>
+          <Button size='small' type='default' onClick={() => void doExportChat()}>导出</Button>
         )}
       </View>
 
       {/* 会话列表面板 */}
       {showSessions && (
         <View className='session-panel'>
-          <Button className='btn btn-primary btn-sm' onClick={startNewSession}>
-            <Icon name='plus-lg' size={24} color='#ffffff' className='btn-icon' />
-            新建会话
-          </Button>
+          <Button block size='small' onClick={startNewSession}>＋ 新建会话</Button>
           {sessions.length === 0 ? (
-            <Empty icon='chat-dots' text='暂无历史会话' />
+            <Empty text='暂无历史会话' />
           ) : (
-            sessions.slice(0, 20).map((s) => (
-              <View key={s.id} className='session-item'>
-                <Icon name='chat-dots' size={26} color='#9ca3af' />
-                <View className='flex-1' onClick={() => openSession(s)}>
-                  <Text className='session-title'>
-                    {s.title}
-                    {s.id === sessionId ? '（当前）' : ''}
-                  </Text>
-                  <Text className='session-time'>{new Date(s.updatedAt).toLocaleString().slice(5, 16)}</Text>
-                </View>
-                <Text className='session-del' onClick={() => confirmDeleteSession(s)}>删除</Text>
-              </View>
-            ))
+            <CellGroup>
+              {sessions.slice(0, 20).map((s) => (
+                <Cell
+                  key={s.id}
+                  title={
+                    <Text className='session-title'>
+                      {s.title}
+                      {s.id === sessionId ? '（当前）' : ''}
+                    </Text>
+                  }
+                  description={<Text className='session-time'>{new Date(s.updatedAt).toLocaleString().slice(5, 16)}</Text>}
+                  onClick={() => openSession(s)}
+                  extra={<Text className='session-del' onClick={() => confirmDeleteSession(s)}>删除</Text>}
+                />
+              ))}
+            </CellGroup>
           )}
         </View>
       )}
@@ -326,22 +336,19 @@ export default function ChatPage() {
 
       {/* 输入区 */}
       <View className='chat-input-bar'>
-        <Textarea
+        <TextArea
           className='chat-input'
           value={input}
           placeholder='输入消息，点发送'
-          onInput={(e) => setInput(e.detail.value)}
-          onConfirm={() => send()}
-          confirmType='send'
+          onChange={(v) => setInput(String(v ?? ''))}
+          maxLength={4000}
           disabled={streaming}
-          maxlength={4000}
-          autoHeight
         />
         <Button
-          className={`btn btn-primary chat-send ${!input.trim() || streaming ? 'btn-disabled' : ''}`}
+          size='large'
+          disabled={!input.trim() || streaming}
           onClick={send}
         >
-          <Icon name='send' size={26} color='#ffffff' className='btn-icon' />
           发送
         </Button>
       </View>

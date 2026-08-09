@@ -21,6 +21,7 @@
   "author": "",
   "dependencies": {
     "@babel/runtime": "^7.24.4",
+    "@nutui/nutui-react-taro": "^4.0.0-beta.5",
     "@tarojs/components": "4.2.1",
     "@tarojs/helper": "4.2.1",
     "@tarojs/plugin-framework-react": "4.2.1",
@@ -61,6 +62,7 @@
     "core-js@3.50.0": true,
     "core-js-pure@3.50.0": true,
     "esbuild@0.21.5": true,
-    "esbuild@0.18.20": true
+    "esbuild@0.18.20": true,
+    "@nutui/nutui-react-taro@4.0.0-beta.5": true
   }
 }

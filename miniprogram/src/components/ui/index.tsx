@@ -1,110 +1,63 @@
-﻿import { View, Text } from '@tarojs/components'
-import type { ReactNode } from 'react'
-import { cn } from '../../lib/utils'
-import { Icon, type IconName } from './Icon'
+﻿import type { ReactNode } from 'react'
+import { Button as NButton, Tag as NTag, Empty as NEmpty, Loading as NLoading } from '@nutui/nutui-react-taro'
 
-/** 卡片容器 */
-export function Card({
+type NButtonProps = React.ComponentProps<typeof NButton>
+
+/** NutUI Button 封装（天机默认 primary） */
+export function Button({
+  type = 'primary',
+  size = 'normal',
+  block = false,
+  plain = false,
+  disabled = false,
+  loading = false,
+  onClick,
   children,
-  className,
-  onClick
-}: {
-  children: ReactNode
-  className?: string
-  onClick?: () => void
-}) {
+  style
+}: Partial<NButtonProps> & { children: ReactNode }) {
   return (
-    <View className={cn('card', onClick && 'card-tappable', className)} onClick={onClick}>
+    <NButton
+      type={type}
+      size={size}
+      block={block}
+      plain={plain}
+      disabled={disabled}
+      loading={loading}
+      onClick={onClick}
+      style={style}
+    >
       {children}
-    </View>
+    </NButton>
   )
 }
 
-/** 卡片标题行（可选图标） */
-export function CardTitle({
-  icon,
-  title,
-  extra,
-  desc
-}: {
-  icon?: IconName
-  title: string
-  extra?: ReactNode
-  desc?: string
-}) {
-  return (
-    <View className='card-head'>
-      <View className='flex items-center gap-sm'>
-        {icon && <Icon name={icon} size={30} color='#6d5ce7' />}
-        <Text className='card-title'>{title}</Text>
-      </View>
-      {extra}
-      {desc && <Text className='card-body'>{desc}</Text>}
-    </View>
-  )
-}
-
-/** 徽章 */
+/** 徽章/标签 */
 export function Badge({
   children,
   tone = 'primary',
   className
 }: {
   children: ReactNode
-  tone?: 'primary' | 'success' | 'warning' | 'danger' | 'neutral'
+  tone?: 'primary' | 'success' | 'warning' | 'danger' | 'default' | 'info'
   className?: string
 }) {
-  const map = {
-    primary: 'badge',
-    success: 'badge badge-success',
-    warning: 'badge badge-warning',
-    danger: 'badge badge-danger',
-    neutral: 'badge badge-neutral'
-  }
-  return <Text className={cn(map[tone], className)}>{children}</Text>
+  return (
+    <NTag type={tone} round className={className}>
+      {children}
+    </NTag>
+  )
 }
 
 /** 空状态 */
-export function Empty({ icon = 'search', text }: { icon?: IconName; text: string }) {
-  return (
-    <View className='empty'>
-      <Icon name={icon} size={72} color='#d1d5db' />
-      <Text className='empty-text'>{text}</Text>
-    </View>
-  )
+export function Empty({ text }: { text: string }) {
+  return <NEmpty description={text} image='empty' />
 }
 
 /** 加载中 */
 export function Loading({ text = '加载中…' }: { text?: string }) {
   return (
-    <View className='loading'>
-      <View className='loading-spinner' />
-      <Text className='text-muted text-sm'>{text}</Text>
-    </View>
-  )
-}
-
-/** 分段选择器 */
-export function Segmented<T extends string>({
-  options,
-  value,
-  onChange
-}: {
-  options: { value: T; label: string }[]
-  value: T
-  onChange: (v: T) => void
-}) {
-  return (
-    <View className='segmented'>
-      {options.map((o) => (
-        <View
-          key={o.value}
-          className={cn('segmented-item', value === o.value && 'segmented-active')}
-          onClick={() => onChange(o.value)}
-        >
-          {o.label}
-        </View>
-      ))}
-    </View>
+    <NLoading type='spinner' style={{ color: '#6d5ce7' }}>
+      {text}
+    </NLoading>
   )
 }

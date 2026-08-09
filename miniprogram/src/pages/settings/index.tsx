@@ -1,11 +1,13 @@
 ﻿import { useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Input, Textarea, Switch, Button, ScrollView } from '@tarojs/components'
+import { View, Text, ScrollView } from '@tarojs/components'
+import { Cell, CellGroup, Input, TextArea, Switch } from '@nutui/nutui-react-taro'
 import { loadConfig, saveConfig } from '../../lib/storage'
 import { testProvider } from '../../lib/ai-client'
 import { defaultConfig, type AppConfig, type ProviderConfig } from '../../lib/types'
 import { useTheme } from '../../lib/theme'
 import { Icon } from '../../components/ui/Icon'
+import { Badge, Button, Empty } from '../../components/ui'
 
 interface ProviderForm {
   name: string
@@ -148,10 +150,10 @@ export default function SettingsPage() {
   }
 
   const sorted = [...cfg.providers].sort((a, b) => a.priority - b.priority)
-  const themeOptions: { id: 'light' | 'dark' | 'system'; label: string }[] = [
-    { id: 'light', label: '浅色' },
-    { id: 'dark', label: '深色' },
-    { id: 'system', label: '跟随系统' }
+  const themeOptions: { id: 'light' | 'dark' | 'system'; label: string; icon: 'sun-fill' | 'moon-stars' | 'display' }[] = [
+    { id: 'light', label: '浅色', icon: 'sun-fill' },
+    { id: 'dark', label: '深色', icon: 'moon-stars' },
+    { id: 'system', label: '跟随系统', icon: 'display' }
   ]
 
   return (
@@ -160,18 +162,18 @@ export default function SettingsPage() {
         {/* 主题 */}
         <View className='card'>
           <View className='flex items-center gap-sm'>
-            <View className='mini-icon'><Icon name='palette' size={26} color='#7c3aed' /></View>
+            <View className='mini-icon'><Icon name='palette' size={26} color='#8b7cf6' /></View>
             <Text className='card-title'>外观主题</Text>
           </View>
           <View className='flex gap-sm'>
             {themeOptions.map((t) => (
               <View
                 key={t.id}
-                className={`btn btn-sm flex-1 ${theme === t.id ? 'btn-primary' : 'btn-outline'}`}
+                className={`theme-option ${theme === t.id ? 'theme-option-active' : ''}`}
                 onClick={() => setTheme(t.id)}
               >
-                <Icon name={t.id === 'light' ? 'sun-fill' : t.id === 'dark' ? 'moon-stars' : 'display'} size={22} color={theme === t.id ? '#ffffff' : '#6d5ce7'} className='btn-icon' />
-                {t.label}
+                <Icon name={t.icon} size={26} color={theme === t.id ? '#ffffff' : '#6d5ce7'} />
+                <Text className={`theme-option-text ${theme === t.id ? 'theme-option-text-active' : ''}`}>{t.label}</Text>
               </View>
             ))}
           </View>
@@ -187,31 +189,36 @@ export default function SettingsPage() {
               </View>
               <Text className='card-body'>故障切换按优先级从低到高尝试；同一 Provider 内多个 Key 轮询</Text>
             </View>
-            <Button className='btn btn-primary btn-sm' onClick={() => openEdit(null)}>
-              <Icon name='plus-lg' size={22} color='#ffffff' className='btn-icon' />
-              新增
-            </Button>
+            <Button size='small' onClick={() => openEdit(null)}>＋ 新增</Button>
           </View>
 
           {sorted.length === 0 ? (
-            <Text className='text-muted'>暂无 Provider，点击「新增」添加</Text>
+            <Empty text='暂无 Provider，点击「新增」添加' />
           ) : (
-            sorted.map((p) => (
-              <View key={p.id} className='provider-item'>
-                <View className='flex flex-col flex-1'>
-                  <View className='flex items-center gap-sm'>
-                    <Text className='provider-name'>{p.name}</Text>
-                    {p.enabled ? <Text className='badge badge-success'>启用</Text> : <Text className='badge'>停用</Text>}
-                    {p.priority === 0 && <Text className='badge badge-warning'>首选</Text>}
-                  </View>
-                  <Text className='provider-detail'>{p.baseURL} · {p.model}</Text>
-                  <Text className='provider-detail'>Key × {p.apiKeys.length} · 优先级 {p.priority}</Text>
-                </View>
-                <Switch checked={p.enabled} color='#6d5ce7' onChange={(e) => toggleProvider(p, e.detail.value)} />
-                <Text className='link' onClick={() => openEdit(p)}>编辑</Text>
-                <Text className='session-del' onClick={() => removeProvider(p)}>删除</Text>
-              </View>
-            ))
+            <CellGroup>
+              {sorted.map((p) => (
+                <Cell
+                  key={p.id}
+                  title={
+                    <View className='flex items-center gap-sm'>
+                      <Text className='provider-name'>{p.name}</Text>
+                      {p.enabled ? <Badge tone='success'>启用</Badge> : <Badge tone='default'>停用</Badge>}
+                      {p.priority === 0 && <Badge tone='warning'>首选</Badge>}
+                    </View>
+                  }
+                  description={
+                    <Text className='provider-detail'>{p.baseURL} · {p.model} · Key × {p.apiKeys.length} · 优先级 {p.priority}</Text>
+                  }
+                  extra={
+                    <View className='flex items-center gap-sm'>
+                      <Switch checked={p.enabled} onChange={(v) => toggleProvider(p, v)} />
+                      <Text className='link' onClick={() => openEdit(p)}>编辑</Text>
+                      <Text className='session-del' onClick={() => removeProvider(p)}>删除</Text>
+                    </View>
+                  }
+                />
+              ))}
+            </CellGroup>
           )}
         </View>
 
@@ -224,29 +231,22 @@ export default function SettingsPage() {
             </View>
             <Text className='card-body'>OpenAI 兼容接口。Base URL 形如 https://api.deepseek.com/v1（无需 /chat/completions 后缀）。</Text>
 
-            <View className='form-row'>
-              <Text className='form-label'>名称</Text>
-              <Input className='input form-input' value={form.name} placeholder='如 DeepSeek' onInput={(e) => setForm((f) => ({ ...f, name: e.detail.value }))} />
-            </View>
-            <View className='form-row'>
-              <Text className='form-label'>Base URL</Text>
-              <Input className='input form-input' value={form.baseURL} placeholder='https://api.deepseek.com/v1' onInput={(e) => setForm((f) => ({ ...f, baseURL: e.detail.value }))} />
-            </View>
-            <View className='form-row'>
-              <Text className='form-label'>模型</Text>
-              <Input className='input form-input' value={form.model} placeholder='deepseek-chat' onInput={(e) => setForm((f) => ({ ...f, model: e.detail.value }))} />
-            </View>
-            <View className='form-row'>
-              <Text className='form-label'>API Key</Text>
-              <Textarea className='textarea form-input' value={form.apiKeys} placeholder={'sk-xxxxxxxx\nsk-yyyyyyyy（每行一个，多个实现轮询容灾）'} onInput={(e) => setForm((f) => ({ ...f, apiKeys: e.detail.value }))} />
-            </View>
-            <View className='form-row'>
-              <Text className='form-label'>优先级</Text>
-              <Input className='input form-input' type='number' value={form.priority} onInput={(e) => setForm((f) => ({ ...f, priority: e.detail.value }))} />
-            </View>
-            <View className='form-row'>
-              <Text className='form-label'>启用</Text>
-              <Switch checked={form.enabled} color='#6d5ce7' onChange={(e) => setForm((f) => ({ ...f, enabled: e.detail.value }))} />
+            <CellGroup>
+              <Cell title='名称' extra={<Input className='cell-input' value={form.name} placeholder='如 DeepSeek' onChange={(v) => setForm((f) => ({ ...f, name: String(v ?? '') }))} />} />
+              <Cell title='Base URL' extra={<Input className='cell-input' value={form.baseURL} placeholder='https://api.deepseek.com/v1' onChange={(v) => setForm((f) => ({ ...f, baseURL: String(v ?? '') }))} />} />
+              <Cell title='模型' extra={<Input className='cell-input' value={form.model} placeholder='deepseek-chat' onChange={(v) => setForm((f) => ({ ...f, model: String(v ?? '') }))} />} />
+              <Cell title='优先级' extra={<Input className='cell-input' type='number' value={form.priority} onChange={(v) => setForm((f) => ({ ...f, priority: String(v ?? '') }))} />} />
+              <Cell title='启用' extra={<Switch checked={form.enabled} onChange={(v) => setForm((f) => ({ ...f, enabled: v }))} />} />
+            </CellGroup>
+            <View className='mt-md'>
+              <TextArea
+                className='provider-keys'
+                value={form.apiKeys}
+                placeholder='sk-xxxxxxxx
+sk-yyyyyyyy（每行一个，多个实现轮询容灾）'
+                onChange={(v) => setForm((f) => ({ ...f, apiKeys: String(v ?? '') }))}
+                rows={4}
+              />
             </View>
 
             {testMsg && (
@@ -256,11 +256,11 @@ export default function SettingsPage() {
             )}
 
             <View className='flex gap-sm mt-md'>
-              <Button className='btn btn-outline flex-1' onClick={() => void doTest()} disabled={testing}>
+              <Button size='small' type='default' onClick={() => void doTest()} loading={testing}>
                 {testing ? '测试中…' : '测试连接'}
               </Button>
-              <Button className='btn btn-primary flex-1' onClick={submit}>保存</Button>
-              <Button className='btn btn-ghost flex-1' onClick={() => setEditing(null)}>取消</Button>
+              <Button size='small' onClick={submit}>保存</Button>
+              <Button size='small' type='default' onClick={() => setEditing(null)}>取消</Button>
             </View>
           </View>
         )}
@@ -268,22 +268,20 @@ export default function SettingsPage() {
         {/* 高可用参数 */}
         <View className='card'>
           <View className='flex items-center gap-sm'>
-            <View className='mini-icon'><Icon name='sliders' size={26} color='#f59e0b' /></View>
+            <View className='mini-icon'><Icon name='sliders' size={26} color='#d97706' /></View>
             <Text className='card-title'>高可用参数</Text>
           </View>
-          <View className='form-row'>
-            <Text className='form-label'>首 token 超时（秒）</Text>
-            <Input className='input form-input' type='number' value={haForm.firstTokenTimeoutMs} onInput={(e) => setHaForm((f) => ({ ...f, firstTokenTimeoutMs: e.detail.value }))} />
+          <CellGroup>
+            <Cell title='首 token 超时（秒）' extra={<Input className='cell-input' type='number' value={haForm.firstTokenTimeoutMs} onChange={(v) => setHaForm((f) => ({ ...f, firstTokenTimeoutMs: String(v ?? '') }))} />} />
+            <Cell title='最大切换次数' extra={<Input className='cell-input' type='number' value={haForm.maxFailovers} onChange={(v) => setHaForm((f) => ({ ...f, maxFailovers: String(v ?? '') }))} />} />
+          </CellGroup>
+          <View className='mt-md'>
+            <Button block size='small' type='default' onClick={saveHa}>保存高可用参数</Button>
           </View>
-          <View className='form-row'>
-            <Text className='form-label'>最大切换次数</Text>
-            <Input className='input form-input' type='number' value={haForm.maxFailovers} onInput={(e) => setHaForm((f) => ({ ...f, maxFailovers: e.detail.value }))} />
-          </View>
-          <Button className='btn btn-outline btn-sm btn-block mt-md' onClick={saveHa}>保存高可用参数</Button>
         </View>
 
         <View className='footer-note'>
-          <Text>小程序版 · 天机 AI{cfg ? ` · 配置版本 v${cfg.version}` : ''}</Text>
+          <Text>天机 AI · 微信小程序{cfg ? ` · 配置版本 v${cfg.version}` : ''}</Text>
         </View>
       </View>
     </ScrollView>

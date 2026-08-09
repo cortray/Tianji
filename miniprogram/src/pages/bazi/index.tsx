@@ -1,6 +1,7 @@
 ﻿import { useEffect, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
-import { View, Text, Input, Picker, Switch, Button, ScrollView } from '@tarojs/components'
+import { View, Text, Input, Picker, ScrollView } from '@tarojs/components'
+import { Switch, Progress, Cell, CellGroup } from '@nutui/nutui-react-taro'
 import { computeBazi, lunarToSolar, trueSolarOffsetMinutes, type BaziInput } from '../../lib/bazi/engine'
 import { buildBaziSystemPrompt, buildBaziUserPrompt } from '../../lib/bazi/prompt'
 import { buildBaziMarkdown, buildAnalysisMarkdown, baziExportFileName } from '../../lib/bazi/export'
@@ -18,6 +19,7 @@ import { Markdown } from '../../lib/markdown'
 import { genId, formatDate } from '../../lib/date'
 import { useTheme } from '../../lib/theme'
 import { Icon } from '../../components/ui/Icon'
+import { Button, Empty } from '../../components/ui'
 import type { BaziChart } from '../../lib/types'
 
 const WUXING_TEXT: Record<string, string> = {
@@ -402,6 +404,19 @@ export default function BaziPage() {
   const wuxingKeys = chart ? Object.keys(chart.wuxing) : []
   const maxWuxing = chart ? Math.max(...wuxingKeys.map((k) => chart.wuxing[k]), 1) : 1
 
+  const genderColumns = [
+    { text: '男', value: 'male' },
+    { text: '女', value: 'female' }
+  ]
+  const calendarColumns = [
+    { text: '阳历（公历）', value: 'solar' },
+    { text: '农历', value: 'lunar' }
+  ]
+  const aliveColumns = [
+    { text: '在世', value: '1' },
+    { text: '已故', value: '0' }
+  ]
+
   return (
     <ScrollView className={`page-scroll ${themeClass}`} scrollY>
       <View className='page-pad'>
@@ -412,95 +427,81 @@ export default function BaziPage() {
             <Text className='card-title'>出生信息</Text>
           </View>
 
-          <View className='form-row'>
-            <Text className='form-label'>姓名</Text>
-            <Input className='input form-input' value={form.name} placeholder='（可选）' onInput={(e) => set('name', e.detail.value)} />
-          </View>
-
-          <View className='form-row'>
-            <Text className='form-label'>性别</Text>
-            <Picker mode='selector' range={['男', '女']} value={form.gender === 'male' ? 0 : 1} onChange={(e) => set('gender', Number(e.detail.value) === 0 ? 'male' : 'female')}>
-              <View className='input form-input form-picker'><Text>{form.gender === 'male' ? '男' : '女'}</Text><Text className='text-muted'>▾</Text></View>
-            </Picker>
-          </View>
-
-          <View className='form-row'>
-            <Text className='form-label'>历法</Text>
-            <Picker mode='selector' range={['阳历（公历）', '农历']} value={form.calendar === 'solar' ? 0 : 1} onChange={(e) => set('calendar', Number(e.detail.value) === 0 ? 'solar' : 'lunar')}>
-              <View className='input form-input form-picker'><Text>{form.calendar === 'solar' ? '阳历（公历）' : '农历'}</Text><Text className='text-muted'>▾</Text></View>
-            </Picker>
-          </View>
-
-          {form.calendar === 'solar' ? (
-            <View className='form-row'>
-              <Text className='form-label'>阳历生日</Text>
-              <Picker mode='date' value={form.birthDate} start='1900-01-01' end='2100-12-31' onChange={(e) => set('birthDate', e.detail.value)}>
-                <View className='input form-input form-picker'><Text>{form.birthDate}</Text><Text className='text-muted'>▾</Text></View>
-              </Picker>
-            </View>
-          ) : (
-            <>
-              <View className='form-row'>
-                <Text className='form-label'>农历年</Text>
-                <Input className='input form-input' type='number' value={form.lunarYear} onInput={(e) => set('lunarYear', e.detail.value)} />
-              </View>
-              <View className='form-row'>
-                <Text className='form-label'>农历月</Text>
-                <View className='flex flex-1 items-center gap-sm'>
-                  <Input className='input form-input flex-1' type='number' value={form.lunarMonth} onInput={(e) => set('lunarMonth', e.detail.value)} />
-                  <Text className='text-sm'>闰月</Text>
-                  <Switch checked={form.lunarLeap} color='#6d5ce7' onChange={(e) => set('lunarLeap', e.detail.value)} />
-                </View>
-              </View>
-              <View className='form-row'>
-                <Text className='form-label'>农历日</Text>
-                <Input className='input form-input' type='number' value={form.lunarDay} onInput={(e) => set('lunarDay', e.detail.value)} />
-              </View>
-            </>
-          )}
-
-          <View className='form-row'>
-            <Text className='form-label'>出生时辰</Text>
-            {form.hourUnknown ? (
-              <View className='input form-input form-picker'><Text className='text-muted'>未知（六字分析）</Text></View>
+          <CellGroup>
+            <Cell title='姓名' extra={<Input className='cell-input' value={form.name} placeholder='（可选）' onInput={(e) => set('name', e.detail.value)} />} />
+            <Cell
+              title='性别'
+              extra={
+                <Picker mode='selector' range={['男', '女']} value={form.gender === 'male' ? 0 : 1} onChange={(e) => set('gender', Number(e.detail.value) === 0 ? 'male' : 'female')}>
+                  <View className='form-picker'><Text>{form.gender === 'male' ? '男' : '女'}</Text><Icon name='chevron-down' size={20} color='#9ca3af' /></View>
+                </Picker>
+              }
+            />
+            <Cell
+              title='历法'
+              extra={
+                <Picker mode='selector' range={['阳历（公历）', '农历']} value={form.calendar === 'solar' ? 0 : 1} onChange={(e) => set('calendar', Number(e.detail.value) === 0 ? 'solar' : 'lunar')}>
+                  <View className='form-picker'><Text>{form.calendar === 'solar' ? '阳历（公历）' : '农历'}</Text><Icon name='chevron-down' size={20} color='#9ca3af' /></View>
+                </Picker>
+              }
+            />
+            {form.calendar === 'solar' ? (
+              <Cell
+                title='阳历生日'
+                extra={
+                  <Picker mode='date' value={form.birthDate} start='1900-01-01' end='2100-12-31' onChange={(e) => set('birthDate', e.detail.value)}>
+                    <View className='form-picker'><Text>{form.birthDate}</Text><Icon name='chevron-down' size={20} color='#9ca3af' /></View>
+                  </Picker>
+                }
+              />
             ) : (
-              <Picker mode='time' value={form.birthTime} onChange={(e) => set('birthTime', e.detail.value)}>
-                <View className='input form-input form-picker'><Text>{form.birthTime}</Text><Text className='text-muted'>▾</Text></View>
-              </Picker>
+              <>
+                <Cell title='农历年' extra={<Input className='cell-input' type='number' value={form.lunarYear} onInput={(e) => set('lunarYear', e.detail.value)} />} />
+                <Cell
+                  title='农历月'
+                  extra={
+                    <View className='flex items-center gap-sm'>
+                      <Input className='cell-input' type='number' value={form.lunarMonth} onInput={(e) => set('lunarMonth', e.detail.value)} />
+                      <Text className='text-sm'>闰</Text>
+                      <Switch checked={form.lunarLeap} onChange={(v) => set('lunarLeap', v)} />
+                    </View>
+                  }
+                />
+                <Cell title='农历日' extra={<Input className='cell-input' type='number' value={form.lunarDay} onInput={(e) => set('lunarDay', e.detail.value)} />} />
+              </>
             )}
-          </View>
-          <View className='form-row'>
-            <Text className='form-label'>时辰未知</Text>
-            <Switch checked={form.hourUnknown} color='#6d5ce7' onChange={(e) => set('hourUnknown', e.detail.value)} />
-          </View>
-
-          <View className='form-row'>
-            <Text className='form-label'>出生地</Text>
-            <Input className='input form-input' value={form.birthplace} placeholder='（可选）' onInput={(e) => set('birthplace', e.detail.value)} />
-          </View>
-          <View className='form-row'>
-            <Text className='form-label'>在世状态</Text>
-            <Picker mode='selector' range={['在世', '已故']} value={form.alive ? 0 : 1} onChange={(e) => set('alive', Number(e.detail.value) === 0)}>
-              <View className='input form-input form-picker'><Text>{form.alive ? '在世' : '已故'}</Text><Text className='text-muted'>▾</Text></View>
-            </Picker>
-          </View>
-
-          <View className='form-row'>
-            <Text className='form-label'>真太阳时</Text>
-            <Switch checked={form.trueSolar} color='#6d5ce7' onChange={(e) => set('trueSolar', e.detail.value)} />
-          </View>
-          {form.trueSolar && (
-            <View className='form-row'>
-              <Text className='form-label'>东经（°）</Text>
-              <Input className='input form-input' type='digit' value={form.longitude} onInput={(e) => set('longitude', e.detail.value)} />
-            </View>
-          )}
+            <Cell
+              title='出生时辰'
+              extra={
+                form.hourUnknown ? (
+                  <Text className='text-muted'>未知（六字分析）</Text>
+                ) : (
+                  <Picker mode='time' value={form.birthTime} onChange={(e) => set('birthTime', e.detail.value)}>
+                    <View className='form-picker'><Text>{form.birthTime}</Text><Icon name='chevron-down' size={20} color='#9ca3af' /></View>
+                  </Picker>
+                )
+              }
+            />
+            <Cell title='时辰未知' extra={<Switch checked={form.hourUnknown} onChange={(v) => set('hourUnknown', v)} />} />
+            <Cell title='出生地' extra={<Input className='cell-input' value={form.birthplace} placeholder='（可选）' onInput={(e) => set('birthplace', e.detail.value)} />} />
+            <Cell
+              title='在世状态'
+              extra={
+                <Picker mode='selector' range={['在世', '已故']} value={form.alive ? 0 : 1} onChange={(e) => set('alive', Number(e.detail.value) === 0)}>
+                  <View className='form-picker'><Text>{form.alive ? '在世' : '已故'}</Text><Icon name='chevron-down' size={20} color='#9ca3af' /></View>
+                </Picker>
+              }
+            />
+            <Cell title='真太阳时' extra={<Switch checked={form.trueSolar} onChange={(v) => set('trueSolar', v)} />} />
+            {form.trueSolar && (
+              <Cell title='东经（°）' extra={<Input className='cell-input' type='digit' value={form.longitude} onInput={(e) => set('longitude', e.detail.value)} />} />
+            )}
+          </CellGroup>
 
           {lunarPreview && <Text className='lunar-preview'>{lunarPreview}</Text>}
 
-          <View className='btn btn-primary btn-block mt-md' onClick={doPaiPan}>
-            <Icon name='magic' size={30} color='#ffffff' className='btn-icon' />
-            开始排盘
+          <View className='mt-md'>
+            <Button block size='large' onClick={doPaiPan}>开始排盘</Button>
           </View>
         </View>
 
@@ -515,17 +516,19 @@ export default function BaziPage() {
         {showHistory && (
           <View className='card'>
             {history.length === 0 ? (
-              <Text className='text-muted'>暂无历史记录</Text>
+              <Empty text='暂无历史记录' />
             ) : (
-              history.map((r) => (
-                <View key={r.id} className='session-item'>
-                  <View className='flex-1' onClick={() => loadRecord(r)}>
-                    <Text className='session-title'>{r.title}</Text>
-                    <Text className='session-time'>{new Date(r.createdAt).toLocaleString().slice(5, 16)}{r.analysis ? ' · 已分析' : ''}</Text>
-                  </View>
-                  <Text className='session-del' onClick={() => confirmRemoveRecord(r)}>删除</Text>
-                </View>
-              ))
+              <CellGroup>
+                {history.map((r) => (
+                  <Cell
+                    key={r.id}
+                    title={<Text className='session-title'>{r.title}</Text>}
+                    description={<Text className='session-time'>{new Date(r.createdAt).toLocaleString().slice(5, 16)}{r.analysis ? ' · 已分析' : ''}</Text>}
+                    onClick={() => loadRecord(r)}
+                    extra={<Text className='session-del' onClick={() => confirmRemoveRecord(r)}>删除</Text>}
+                  />
+                ))}
+              </CellGroup>
             )}
           </View>
         )}
@@ -545,10 +548,10 @@ export default function BaziPage() {
                 {pillarNames.map((n, i) => (
                   <View key={n} className='pillar-col'>
                     <Text className='pillar-name'>{n}</Text>
-                    <Text className='pillar-gan' style={pillars[i] ? { color: WUXING_TEXT[pillars[i]!.ganWuxing] || '#111827' } : {}}>
+                    <Text className='pillar-gan' style={pillars[i] ? { color: WUXING_TEXT[pillars[i]!.ganWuxing] || '#1c2030' } : {}}>
                       {pillars[i]?.gan ?? '—'}
                     </Text>
-                    <Text className='pillar-zhi' style={pillars[i] ? { color: WUXING_TEXT[pillars[i]!.zhiWuxing] || '#111827' } : {}}>
+                    <Text className='pillar-zhi' style={pillars[i] ? { color: WUXING_TEXT[pillars[i]!.zhiWuxing] || '#1c2030' } : {}}>
                       {pillars[i]?.zhi ?? '—'}
                     </Text>
                     <Text className='pillar-small'>{pillars[i]?.shishenGan ?? ''}</Text>
@@ -558,7 +561,7 @@ export default function BaziPage() {
                 ))}
               </View>
               <View className='separator' />
-              <Text className='text-sm text-secondary'>日主：<Text className='font-bold' style={{ color: WUXING_TEXT[chart.dayMaster] || '#111827' }}>{chart.dayMaster}</Text>
+              <Text className='text-sm text-secondary'>日主：<Text className='font-bold' style={{ color: WUXING_TEXT[chart.dayMaster] || '#1c2030' }}>{chart.dayMaster}</Text>
                 {'　'}流年：{chart.currentYear.year}（{chart.currentYear.ganzhi}）
               </Text>
               {correction && (
@@ -577,7 +580,7 @@ export default function BaziPage() {
                 <View key={k} className='wuxing-row'>
                   <Text className='wuxing-label' style={{ color: WUXING_TEXT[k] }}>{k}</Text>
                   <View className='wuxing-bar'>
-                    <View className='wuxing-fill' style={{ width: `${(chart.wuxing[k] / maxWuxing) * 100}%`, backgroundColor: WUXING_TEXT[k] }} />
+                    <Progress percent={Math.round((chart.wuxing[k] / maxWuxing) * 100)} activeColor={WUXING_TEXT[k]} showInfo={false} style={{ height: '100%' }} />
                   </View>
                   <Text className='wuxing-num'>{chart.wuxing[k]}</Text>
                 </View>
@@ -586,7 +589,7 @@ export default function BaziPage() {
 
             <View className='card'>
               <View className='flex items-center gap-sm'>
-                <View className='mini-icon'><Icon name='clock-history' size={26} color='#f59e0b' /></View>
+                <View className='mini-icon'><Icon name='clock-history' size={26} color='#d97706' /></View>
                 <Text className='card-title'>大运</Text>
               </View>
               <View className='table-scroll'>
@@ -615,42 +618,31 @@ export default function BaziPage() {
         {chart && (
           <View className='card'>
             <View className='flex items-center gap-sm'>
-              <View className='mini-icon'><Icon name='journal-text' size={26} color='#7c3aed' /></View>
+              <View className='mini-icon'><Icon name='journal-text' size={26} color='#8b7cf6' /></View>
               <Text className='card-title'>AI 命理分析</Text>
             </View>
             {analysis === '' && !analyzing ? (
-              <View className='btn btn-primary btn-block' onClick={() => void doAnalyze()}>
-                <Icon name='magic' size={28} color='#ffffff' className='btn-icon' />
-                开始 AI 分析
-              </View>
+              <Button block size='large' onClick={() => void doAnalyze()}>开始 AI 分析</Button>
             ) : (
               <>
                 {analysis !== '' && <Markdown content={analysis} />}
                 {analyzing && (
                   <View className='chat-status'>
-                    <Icon name='stop-circle' size={24} color='#9ca3af' className='btn-icon' />
                     <Text className='text-muted text-sm'>{analysisStatus || '生成中…'}</Text>
                   </View>
                 )}
                 {!analyzing && (
                   <View className='flex gap-sm mt-md'>
-                    <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doAnalyze()}>
-                      <Icon name='arrow-repeat' size={24} color='#6d5ce7' className='btn-icon' />
-                      重新分析
-                    </Button>
-                    <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doExportAnalysis()}>
-                      <Icon name='download' size={24} color='#6d5ce7' className='btn-icon' />
-                      导出分析
-                    </Button>
+                    <Button size='small' onClick={() => void doAnalyze()}>重新分析</Button>
+                    <Button size='small' type='default' onClick={() => void doExportAnalysis()}>导出分析</Button>
                   </View>
                 )}
               </>
             )}
             {chart && analysis !== '' && (
-              <Button className='btn btn-ghost btn-sm btn-block mt-sm' onClick={() => void doExport()}>
-                <Icon name='file-earmark-text' size={24} color='#6d5ce7' className='btn-icon' />
-                导出完整排盘（Markdown）
-              </Button>
+              <View className='mt-sm'>
+                <Button block size='small' type='default' onClick={() => void doExport()}>导出完整排盘（Markdown）</Button>
+              </View>
             )}
           </View>
         )}

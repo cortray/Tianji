@@ -6,7 +6,7 @@ import { getAllSkills } from '../../lib/skills'
 import { useTheme } from '../../lib/theme'
 import type { AppConfig } from '../../lib/types'
 import { Icon, type IconName } from '../../components/ui/Icon'
-import { Badge } from '../../components/ui'
+import { Badge, Button } from '../../components/ui'
 
 export default function OverviewPage() {
   const { themeClass } = useTheme()
@@ -39,7 +39,7 @@ export default function OverviewPage() {
     {
       page: 'bazi',
       icon: 'calendar3',
-      iconBg: '#eef2ff',
+      iconBg: '#efecfd',
       iconColor: '#6d5ce7',
       title: '八字排盘',
       desc: '四柱、十神、大运、流年本地精确计算，一键 AI 命理分析'
@@ -47,7 +47,7 @@ export default function OverviewPage() {
     {
       page: 'chat',
       icon: 'chat-dots',
-      iconBg: '#ecfdf5',
+      iconBg: '#e6f9f0',
       iconColor: '#10b981',
       title: 'AI 对话',
       desc: '内置「八字命理」技能驱动，流式输出，多会话管理'
@@ -55,8 +55,8 @@ export default function OverviewPage() {
     {
       page: 'settings',
       icon: 'gear',
-      iconBg: '#fff7ed',
-      iconColor: '#f59e0b',
+      iconBg: '#fdf3dc',
+      iconColor: '#d97706',
       title: '设置',
       desc: '模型 Provider、API Key、高可用参数、明暗主题'
     }
@@ -86,7 +86,7 @@ export default function OverviewPage() {
           <Text className='stat-label'>启用 Provider</Text>
         </View>
         <View className='stat card'>
-          <Icon name='key-fill' size={34} color='#f59e0b' />
+          <Icon name='key-fill' size={34} color='#d97706' />
           <Text className='stat-num'>{stats.keys}</Text>
           <Text className='stat-label'>API Key</Text>
         </View>
@@ -125,10 +125,9 @@ export default function OverviewPage() {
         </Text>
       </View>
 
-      <View className='btn btn-primary btn-block' onClick={() => go('bazi')}>
-        <Icon name='magic' size={30} color='#ffffff' className='btn-icon' />
+      <Button block size='large' onClick={() => go('bazi')}>
         开始排盘
-      </View>
+      </Button>
       <View className='footer-note'>命理分析仅供文化学习与娱乐参考</View>
     </View>
   )
