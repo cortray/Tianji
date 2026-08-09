@@ -150,6 +150,8 @@ function requestOnce(
       },
       timeout: 120000,
       // @ts-ignore enableChunked / onChunkReceived 为微信小程序专有选项
+      responseType: 'arraybuffer',
+      // @ts-ignore
       enableChunked: true,
       // @ts-ignore
       onChunkReceived: (res: { data: ArrayBuffer | string }) => {
@@ -167,8 +169,21 @@ function requestOnce(
           parseSseLine(line, (delta) => callbacks.onChunk(delta))
         }
       },
-      success: () => {
+      success: (res: { statusCode?: number; data?: unknown }) => {
         if (isCancelled()) return finish('cancelled')
+        // enableChunked 模式下 4xx/5xx 也走 success：必须检查 statusCode，
+        // 否则错误响应会被当作一次"空回复的成功对话"
+        const status = res.statusCode ?? 200
+        if (status < 200 || status >= 300) {
+          const body =
+            typeof res.data === 'string'
+              ? res.data
+              : res.data instanceof ArrayBuffer
+                ? decodeUtf8(res.data)
+                : JSON.stringify(res.data ?? '')
+          finish(redactSecrets(`HTTP ${status}: ${(body || '').slice(0, 200)}`, provider.apiKeys ?? []))
+          return
+        }
         finish('done')
       },
       fail: (err: { errMsg?: string }) => {

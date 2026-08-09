@@ -1,4 +1,4 @@
-import { View, Text } from '@tarojs/components'
+﻿import { View, Text } from '@tarojs/components'
 import type { ReactNode } from 'react'
 import { cn } from '../../lib/utils'
 import { Icon, type IconName } from './Icon'
@@ -35,7 +35,7 @@ export function CardTitle({
   return (
     <View className='card-head'>
       <View className='flex items-center gap-sm'>
-        {icon && <Icon name={icon} size={30} color='#4f46e5' />}
+        {icon && <Icon name={icon} size={30} color='#6d5ce7' />}
         <Text className='card-title'>{title}</Text>
       </View>
       {extra}

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text } from '@tarojs/components'
 import { loadConfig } from '../../lib/storage'
@@ -40,7 +40,7 @@ export default function OverviewPage() {
       page: 'bazi',
       icon: 'calendar3',
       iconBg: '#eef2ff',
-      iconColor: '#4f46e5',
+      iconColor: '#6d5ce7',
       title: '八字排盘',
       desc: '四柱、十神、大运、流年本地精确计算，一键 AI 命理分析'
     },
@@ -81,7 +81,7 @@ export default function OverviewPage() {
       {/* 统计 */}
       <View className='stats-row'>
         <View className='stat card'>
-          <Icon name='plug-fill' size={34} color='#4f46e5' />
+          <Icon name='plug-fill' size={34} color='#6d5ce7' />
           <Text className='stat-num'>{stats.providers}</Text>
           <Text className='stat-label'>启用 Provider</Text>
         </View>
@@ -116,7 +116,7 @@ export default function OverviewPage() {
       {/* 说明 */}
       <View className='card'>
         <View className='flex items-center gap-sm'>
-          <Icon name='shield-check' size={30} color='#4f46e5' />
+          <Icon name='shield-check' size={30} color='#6d5ce7' />
           <Text className='card-title'>高可用策略</Text>
         </View>
         <Text className='card-body'>

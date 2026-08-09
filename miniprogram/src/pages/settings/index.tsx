@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Input, Textarea, Switch, Button, ScrollView } from '@tarojs/components'
 import { loadConfig, saveConfig } from '../../lib/storage'
@@ -170,7 +170,7 @@ export default function SettingsPage() {
                 className={`btn btn-sm flex-1 ${theme === t.id ? 'btn-primary' : 'btn-outline'}`}
                 onClick={() => setTheme(t.id)}
               >
-                <Icon name={t.id === 'light' ? 'sun-fill' : t.id === 'dark' ? 'moon-stars' : 'display'} size={22} color={theme === t.id ? '#ffffff' : '#4f46e5'} className='btn-icon' />
+                <Icon name={t.id === 'light' ? 'sun-fill' : t.id === 'dark' ? 'moon-stars' : 'display'} size={22} color={theme === t.id ? '#ffffff' : '#6d5ce7'} className='btn-icon' />
                 {t.label}
               </View>
             ))}
@@ -207,7 +207,7 @@ export default function SettingsPage() {
                   <Text className='provider-detail'>{p.baseURL} · {p.model}</Text>
                   <Text className='provider-detail'>Key × {p.apiKeys.length} · 优先级 {p.priority}</Text>
                 </View>
-                <Switch checked={p.enabled} color='#4f46e5' onChange={(e) => toggleProvider(p, e.detail.value)} />
+                <Switch checked={p.enabled} color='#6d5ce7' onChange={(e) => toggleProvider(p, e.detail.value)} />
                 <Text className='link' onClick={() => openEdit(p)}>编辑</Text>
                 <Text className='session-del' onClick={() => removeProvider(p)}>删除</Text>
               </View>
@@ -219,7 +219,7 @@ export default function SettingsPage() {
         {editing !== null && (
           <View className='card'>
             <View className='flex items-center gap-sm'>
-              <View className='mini-icon'><Icon name={editing === 'new' ? 'plus-lg' : 'pencil'} size={26} color='#4f46e5' /></View>
+              <View className='mini-icon'><Icon name={editing === 'new' ? 'plus-lg' : 'pencil'} size={26} color='#6d5ce7' /></View>
               <Text className='card-title'>{editing === 'new' ? '新增 Provider' : '编辑 Provider'}</Text>
             </View>
             <Text className='card-body'>OpenAI 兼容接口。Base URL 形如 https://api.deepseek.com/v1（无需 /chat/completions 后缀）。</Text>
@@ -246,7 +246,7 @@ export default function SettingsPage() {
             </View>
             <View className='form-row'>
               <Text className='form-label'>启用</Text>
-              <Switch checked={form.enabled} color='#4f46e5' onChange={(e) => setForm((f) => ({ ...f, enabled: e.detail.value }))} />
+              <Switch checked={form.enabled} color='#6d5ce7' onChange={(e) => setForm((f) => ({ ...f, enabled: e.detail.value }))} />
             </View>
 
             {testMsg && (

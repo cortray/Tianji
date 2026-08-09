@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Textarea, ScrollView, Button, Picker } from '@tarojs/components'
 import { startChat, type ChatHandle } from '../../lib/ai-client'
@@ -148,7 +148,7 @@ export default function ChatPage() {
     const handle = startChat(
       { messages: payload, temperature: 0.7 },
       {
-        onBegin: (info) => setStatus(`正在使用 ${info.providerName}（${info.model}）…`),
+        onBegin: () => setStatus('天机引擎正在推理…'),
         onChunk: (t) => {
           setMessages((m) => {
             const last = m[m.length - 1]
@@ -158,8 +158,7 @@ export default function ChatPage() {
             return [...m, { role: 'assistant', content: t }]
           })
         },
-        onProviderError: (info) =>
-          setStatus(`${info.providerName} 失败（${info.message}），正在切换备用模型…`),
+        onProviderError: () => setStatus('天机引擎遇到波动，正在切换备用通道…'),
         onFail: (msg) => {
           setStatus('')
           Taro.showToast({ title: msg.slice(0, 30), icon: 'none', duration: 3000 })
@@ -221,7 +220,7 @@ export default function ChatPage() {
       {/* 顶部工具条 */}
       <View className='chat-toolbar'>
         <Button className='btn btn-outline btn-sm' onClick={() => setShowSessions(!showSessions)}>
-          <Icon name='journal-text' size={26} color='#4f46e5' className='btn-icon' />
+          <Icon name='journal-text' size={26} color='#6d5ce7' className='btn-icon' />
           {showSessions ? '收起' : '会话'}（{sessions.length}）
         </Button>
         <View className='flex items-center gap-sm'>
@@ -236,7 +235,7 @@ export default function ChatPage() {
         <View className='flex-1' />
         {streaming ? (
           <Button className='btn btn-outline btn-sm' onClick={stop}>
-            <Icon name='stop-circle' size={26} color='#4f46e5' className='btn-icon' />
+            <Icon name='stop-circle' size={26} color='#6d5ce7' className='btn-icon' />
             停止
           </Button>
         ) : (
@@ -247,7 +246,7 @@ export default function ChatPage() {
         )}
         {messages.length > 0 && !streaming && (
           <Button className='btn btn-ghost btn-sm' onClick={() => void doExportChat()}>
-            <Icon name='download' size={24} color='#4f46e5' />
+            <Icon name='download' size={24} color='#6d5ce7' />
             导出
           </Button>
         )}
@@ -308,7 +307,7 @@ export default function ChatPage() {
             ) : (
               <View key={i} className='chat-row'>
                 <View className='chat-avatar'>
-                  <Icon name='robot' size={26} color='#4f46e5' />
+                  <Icon name='robot' size={26} color='#6d5ce7' />
                 </View>
                 <View className='chat-bubble'>
                   <Markdown content={m.content} />

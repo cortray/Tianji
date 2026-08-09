@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+﻿import { useEffect, useRef, useState } from 'react'
 import Taro from '@tarojs/taro'
 import { View, Text, Input, Picker, Switch, Button, ScrollView } from '@tarojs/components'
 import { computeBazi, lunarToSolar, trueSolarOffsetMinutes, type BaziInput } from '../../lib/bazi/engine'
@@ -298,13 +298,12 @@ export default function BaziPage() {
         maxTokens: 4096
       },
       {
-        onBegin: (info) => setAnalysisStatus(`正在使用 ${info.providerName}（${info.model}）分析…`),
+        onBegin: () => setAnalysisStatus('天机引擎正在推演命盘…'),
         onChunk: (t) => {
           analysisRef.current += t
           setAnalysis((a) => a + t)
         },
-        onProviderError: (info) =>
-          setAnalysisStatus(`${info.providerName} 失败（${info.message}），正在切换备用模型…`),
+        onProviderError: () => setAnalysisStatus('天机引擎遇到波动，正在切换备用通道…'),
         onFail: (msg) => {
           setAnalysisStatus('')
           Taro.showToast({ title: msg.slice(0, 30), icon: 'none', duration: 3000 })
@@ -409,7 +408,7 @@ export default function BaziPage() {
         {/* ===== 输入表单 ===== */}
         <View className='card'>
           <View className='flex items-center gap-sm'>
-            <View className='mini-icon'><Icon name='calendar3' size={26} color='#4f46e5' /></View>
+            <View className='mini-icon'><Icon name='calendar3' size={26} color='#6d5ce7' /></View>
             <Text className='card-title'>出生信息</Text>
           </View>
 
@@ -450,7 +449,7 @@ export default function BaziPage() {
                 <View className='flex flex-1 items-center gap-sm'>
                   <Input className='input form-input flex-1' type='number' value={form.lunarMonth} onInput={(e) => set('lunarMonth', e.detail.value)} />
                   <Text className='text-sm'>闰月</Text>
-                  <Switch checked={form.lunarLeap} color='#4f46e5' onChange={(e) => set('lunarLeap', e.detail.value)} />
+                  <Switch checked={form.lunarLeap} color='#6d5ce7' onChange={(e) => set('lunarLeap', e.detail.value)} />
                 </View>
               </View>
               <View className='form-row'>
@@ -472,7 +471,7 @@ export default function BaziPage() {
           </View>
           <View className='form-row'>
             <Text className='form-label'>时辰未知</Text>
-            <Switch checked={form.hourUnknown} color='#4f46e5' onChange={(e) => set('hourUnknown', e.detail.value)} />
+            <Switch checked={form.hourUnknown} color='#6d5ce7' onChange={(e) => set('hourUnknown', e.detail.value)} />
           </View>
 
           <View className='form-row'>
@@ -488,7 +487,7 @@ export default function BaziPage() {
 
           <View className='form-row'>
             <Text className='form-label'>真太阳时</Text>
-            <Switch checked={form.trueSolar} color='#4f46e5' onChange={(e) => set('trueSolar', e.detail.value)} />
+            <Switch checked={form.trueSolar} color='#6d5ce7' onChange={(e) => set('trueSolar', e.detail.value)} />
           </View>
           {form.trueSolar && (
             <View className='form-row'>
@@ -509,7 +508,7 @@ export default function BaziPage() {
         <View className='flex items-center justify-between'>
           <Text className='text-sm text-secondary'>排盘历史（{history.length}/30）</Text>
           <Text className='link' onClick={() => setShowHistory(!showHistory)}>
-            <Icon name={showHistory ? 'chevron-up' : 'chevron-down'} size={22} color='#4f46e5' />
+            <Icon name={showHistory ? 'chevron-up' : 'chevron-down'} size={22} color='#6d5ce7' />
             {showHistory ? '收起' : '查看'}
           </Text>
         </View>
@@ -537,7 +536,7 @@ export default function BaziPage() {
             <View className='card'>
               <View className='flex items-center justify-between'>
                 <View className='flex items-center gap-sm'>
-                  <View className='mini-icon'><Icon name='clipboard-data' size={26} color='#4f46e5' /></View>
+                  <View className='mini-icon'><Icon name='clipboard-data' size={26} color='#6d5ce7' /></View>
                   <Text className='card-title'>四柱排盘</Text>
                 </View>
                 <Text className='text-sm text-secondary'>{chart.lunarText}</Text>
@@ -636,11 +635,11 @@ export default function BaziPage() {
                 {!analyzing && (
                   <View className='flex gap-sm mt-md'>
                     <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doAnalyze()}>
-                      <Icon name='arrow-repeat' size={24} color='#4f46e5' className='btn-icon' />
+                      <Icon name='arrow-repeat' size={24} color='#6d5ce7' className='btn-icon' />
                       重新分析
                     </Button>
                     <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doExportAnalysis()}>
-                      <Icon name='download' size={24} color='#4f46e5' className='btn-icon' />
+                      <Icon name='download' size={24} color='#6d5ce7' className='btn-icon' />
                       导出分析
                     </Button>
                   </View>
@@ -649,7 +648,7 @@ export default function BaziPage() {
             )}
             {chart && analysis !== '' && (
               <Button className='btn btn-ghost btn-sm btn-block mt-sm' onClick={() => void doExport()}>
-                <Icon name='file-earmark-text' size={24} color='#4f46e5' className='btn-icon' />
+                <Icon name='file-earmark-text' size={24} color='#6d5ce7' className='btn-icon' />
                 导出完整排盘（Markdown）
               </Button>
             )}

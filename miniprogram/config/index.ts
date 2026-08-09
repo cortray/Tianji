@@ -19,7 +19,10 @@ export default defineConfig<'vite'>(async (merge) => {
     plugins: [],
     defineConstants: {},
     copy: {
-      patterns: [],
+      patterns: [
+        // 微信自定义 tabBar（原生组件，Taro 不自动编译）
+        { from: 'src/custom-tab-bar/', to: 'dist/custom-tab-bar/' }
+      ],
       options: {}
     },
     framework: 'react',

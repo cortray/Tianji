@@ -1,4 +1,4 @@
-export default defineAppConfig({
+﻿export default defineAppConfig({
   pages: [
     'pages/overview/index',
     'pages/bazi/index',
@@ -13,8 +13,9 @@ export default defineAppConfig({
     backgroundColor: '#f9fafb'
   },
   tabBar: {
+    custom: true,
     color: '#9ca3af',
-    selectedColor: '#4f46e5',
+    selectedColor: '#6d5ce7',
     backgroundColor: '#ffffff',
     borderStyle: 'black',
     list: [

@@ -1,25 +1,28 @@
-/* 图标字体（Bootstrap Icons 子集，base64 内嵌，由 scripts/gen-icons.mjs 生成＄1�7 */
+﻿/* 图标字体（Bootstrap Icons 子集，base64 内嵌，由 scripts/gen-icons.mjs 生成＄1�7 */
 @use './styles/icons.gen.scss';
 
-/* ===== 设�1�7令牌（CSS 变量＄1�7===== */
+/* ===== 设�1�7令牌（CSS 变量＄1�7===== */
 page {
-  --brand: #4f46e5;
-  --brand-2: #7c3aed;
-  --brand-soft: #eef2ff;
-  --success: #16a34a;
-  --warning: #d97706;
+  --brand: #6d5ce7;
+  --brand-2: #8b7cf6;
+  --brand-deep: #5a4bd1;
+  --brand-soft: #efecfd;
+  --gold: #e8b44a;
+  --gold-soft: #fdf3dc;
+  --success: #10b981;
+  --warning: #f59e0b;
   --danger: #ef4444;
-  --bg: #f6f7fb;
+  --bg: #f6f5fb;
   --card: #ffffff;
-  --text: #111827;
+  --text: #1c2030;
   --text-2: #6b7280;
-  --text-3: #9ca3af;
-  --border: #eef0f5;
-  --line: #e5e7eb;
-  --radius: 16px;
-  --radius-sm: 12px;
-  --shadow: 0 2px 8px rgba(17, 24, 39, 0.05);
-  --shadow-lg: 0 8px 24px rgba(79, 70, 229, 0.12);
+  --text-3: #a0a4b3;
+  --border: #f0eef8;
+  --line: #e7e5f0;
+  --radius: 20px;
+  --radius-sm: 14px;
+  --shadow: 0 2px 10px rgba(30, 27, 75, 0.06);
+  --shadow-lg: 0 10px 30px rgba(109, 92, 231, 0.22);
 }
 
 /* 全局样式 */
@@ -32,7 +35,7 @@ page {
     'Hiragino Sans GB', 'Microsoft YaHei', sans-serif;
 }
 
-/* 通用工具籄1�7 */
+/* 通用工具籄1�7 */
 .flex {
   display: flex;
 }
@@ -80,7 +83,7 @@ page {
   color: #9ca3af;
 }
 .text-primary {
-  color: #4f46e5;
+  color: var(--brand);
 }
 .text-danger {
   color: #ef4444;
@@ -181,7 +184,7 @@ page {
   padding: 0 20px;
 }
 
-/* 输入桄1�7 */
+/* 输入桄1�7 */
 .input {
   width: 100%;
   height: 80px;
@@ -203,7 +206,7 @@ page {
   box-sizing: border-box;
 }
 
-/* 标�1�7/徽章 */
+/* 标�1�7/徽章 */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -211,7 +214,7 @@ page {
   border-radius: 999px;
   font-size: 22px;
   background-color: #eef2ff;
-  color: #4f46e5;
+  color: var(--brand);
 }
 .badge-success {
   background-color: #dcfce7;
@@ -226,7 +229,7 @@ page {
   color: #ef4444;
 }
 
-/* 分隔纄1�7 */
+/* 分隔纄1�7 */
 .separator {
   height: 2px;
   background-color: #f3f4f6;
@@ -322,17 +325,39 @@ page {
   color: #374151;
 }
 
-/* 页面内边距（tabBar 页面＄1�7 */
+/* 页面内边距（tabBar 页面＄1�7 */
 .page-pad {
-  padding: 24px;
+  padding: 24px 24px 200px;
 }
 
 /* 首页 */
 .hero {
-  background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, #5a4bd1 0%, #7c5cf0 45%, #9b6df2 100%);
   color: #ffffff;
   padding: 48px 32px;
-  box-shadow: 0 12px 32px rgba(79, 70, 229, 0.28);
+  box-shadow: 0 16px 40px rgba(90, 75, 209, 0.35);
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content: '';
+  position: absolute;
+  right: -60px;
+  top: -60px;
+  width: 260px;
+  height: 260px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 180, 74, 0.35) 0%, rgba(232, 180, 74, 0) 70%);
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  left: -40px;
+  bottom: -80px;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 70%);
 }
 .hero-icon {
   width: 88px;
@@ -343,6 +368,14 @@ page {
   align-items: center;
   justify-content: center;
   margin-bottom: 24px;
+  position: relative;
+  z-index: 1;
+}
+.hero-title,
+.hero-sub,
+.hero-badges {
+  position: relative;
+  z-index: 1;
 }
 .hero-title {
   font-size: 52px;
@@ -385,7 +418,7 @@ page {
 .stat-num {
   font-size: 44px;
   font-weight: 700;
-  color: #4f46e5;
+  color: var(--brand);
   display: block;
 }
 .stat-label {
@@ -450,7 +483,7 @@ page {
 
 /* 链接 */
 .link {
-  color: #4f46e5;
+  color: var(--brand);
   font-size: 26px;
 }
 
@@ -478,7 +511,7 @@ page {
 .lunar-preview {
   display: block;
   font-size: 24px;
-  color: #4f46e5;
+  color: var(--brand);
   margin-bottom: 12px;
 }
 .correction-line {
@@ -522,7 +555,7 @@ page {
   flex-shrink: 0;
 }
 
-/* 对话顄1�7 */
+/* 对话顄1�7 */
 .chat-page {
   display: flex;
   flex-direction: column;
@@ -584,7 +617,7 @@ page {
   height: 64px;
   border-radius: 12px;
   background-color: #eef2ff;
-  color: #4f46e5;
+  color: var(--brand);
   font-size: 22px;
   font-weight: 700;
   display: flex;
@@ -603,7 +636,7 @@ page {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 .chat-bubble-user {
-  background-color: #4f46e5;
+  background-color: var(--brand);
   color: #ffffff;
 }
 .chat-status {
@@ -614,8 +647,9 @@ page {
   align-items: flex-end;
   gap: 12px;
   padding: 16px 20px;
-  background-color: #ffffff;
-  border-top: 2px solid #f3f4f6;
+  background-color: var(--card);
+  border-top: 2px solid var(--border);
+  margin-bottom: 140px;
 }
 .chat-input {
   flex: 1;
@@ -719,7 +753,7 @@ page {
   border-left: none;
 }
 
-/* 设置顄1�7 */
+/* 设置顄1�7 */
 .provider-item {
   display: flex;
   align-items: center;
@@ -756,7 +790,7 @@ page {
   color: #ef4444;
 }
 
-/* 暗色主�1�7 */
+/* 暗色主�1�7 */
 .theme-dark,
 .theme-dark page {
   background-color: #111827;
@@ -814,12 +848,12 @@ page {
 .theme-dark .btn-outline {
   background-color: #1f2937;
   color: #a5b4fc;
-  border-color: #4f46e5;
+  border-color: var(--brand);
 }
 
-/* ===== ������� ===== */
+/* ===== ������� ===== */
 
-/* ͼ�갴ť */
+/* ͼ�갴ť */
 .icon-btn {
   padding: 8px;
   border-radius: 10px;
@@ -828,13 +862,13 @@ page {
   background-color: rgba(79, 70, 229, 0.1);
 }
 
-/* ���£�neutral�� */
+/* ���£�neutral�� */
 .badge-neutral {
   background-color: #f3f4f6;
   color: #6b7280;
 }
 
-/* ��״̬ */
+/* ��״̬ */
 .empty {
   display: flex;
   flex-direction: column;
@@ -847,7 +881,7 @@ page {
   font-size: 26px;
 }
 
-/* ������ */
+/* ������ */
 .loading {
   display: flex;
   align-items: center;
@@ -867,7 +901,7 @@ page {
   to { transform: rotate(360deg); }
 }
 
-/* �ֶ�ѡ���� */
+/* �ֶ�ѡ���� */
 .segmented {
   display: flex;
   background-color: #eef0f5;
@@ -890,7 +924,7 @@ page {
   box-shadow: 0 2px 6px rgba(17, 24, 39, 0.08);
 }
 
-/* �б��У���ڣ� */
+/* �б��У���ڣ� */
 .list-item {
   display: flex;
   align-items: center;
@@ -923,14 +957,14 @@ page {
   margin-top: 6px;
 }
 
-/* ���⸲�ǣ���ɫ�߱������Զ���Ч�� */
+/* ���⸲�ǣ���ɫ�߱������Զ���Ч�� */
 .theme-dark page {
-  --bg: #0f1420;
-  --card: #1a2232;
-  --text: #f3f4f6;
-  --text-2: #9ca3af;
-  --text-3: #6b7280;
-  --border: #232d42;
-  --line: #2d3a55;
+  --bg: #0d1220;
+  --card: #161d33;
+  --text: #eef0f8;
+  --text-2: #9aa3bd;
+  --text-3: #67708c;
+  --border: #202942;
+  --line: #2a3552;
   --brand-soft: #262d4d;
 }
