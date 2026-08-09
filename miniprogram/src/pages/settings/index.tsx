@@ -5,6 +5,7 @@ import { loadConfig, saveConfig } from '../../lib/storage'
 import { testProvider } from '../../lib/ai-client'
 import { defaultConfig, type AppConfig, type ProviderConfig } from '../../lib/types'
 import { useTheme } from '../../lib/theme'
+import { Icon } from '../../components/ui/Icon'
 
 interface ProviderForm {
   name: string
@@ -158,7 +159,10 @@ export default function SettingsPage() {
       <View className={`page-pad ${themeClass}`}>
         {/* 主题 */}
         <View className='card'>
-          <Text className='card-title'>外观主题</Text>
+          <View className='flex items-center gap-sm'>
+            <View className='mini-icon'><Icon name='palette' size={26} color='#7c3aed' /></View>
+            <Text className='card-title'>外观主题</Text>
+          </View>
           <View className='flex gap-sm'>
             {themeOptions.map((t) => (
               <View
@@ -166,6 +170,7 @@ export default function SettingsPage() {
                 className={`btn btn-sm flex-1 ${theme === t.id ? 'btn-primary' : 'btn-outline'}`}
                 onClick={() => setTheme(t.id)}
               >
+                <Icon name={t.id === 'light' ? 'sun-fill' : t.id === 'dark' ? 'moon-stars' : 'display'} size={22} color={theme === t.id ? '#ffffff' : '#4f46e5'} className='btn-icon' />
                 {t.label}
               </View>
             ))}
@@ -176,10 +181,16 @@ export default function SettingsPage() {
         <View className='card'>
           <View className='flex items-center justify-between'>
             <View className='flex-1'>
-              <Text className='card-title'>模型 Provider</Text>
+              <View className='flex items-center gap-sm'>
+                <View className='mini-icon'><Icon name='plug-fill' size={26} color='#10b981' /></View>
+                <Text className='card-title'>模型 Provider</Text>
+              </View>
               <Text className='card-body'>故障切换按优先级从低到高尝试；同一 Provider 内多个 Key 轮询</Text>
             </View>
-            <Button className='btn btn-primary btn-sm' onClick={() => openEdit(null)}>＋ 新增</Button>
+            <Button className='btn btn-primary btn-sm' onClick={() => openEdit(null)}>
+              <Icon name='plus-lg' size={22} color='#ffffff' className='btn-icon' />
+              新增
+            </Button>
           </View>
 
           {sorted.length === 0 ? (
@@ -207,7 +218,10 @@ export default function SettingsPage() {
         {/* 编辑面板 */}
         {editing !== null && (
           <View className='card'>
-            <Text className='card-title'>{editing === 'new' ? '新增 Provider' : '编辑 Provider'}</Text>
+            <View className='flex items-center gap-sm'>
+              <View className='mini-icon'><Icon name={editing === 'new' ? 'plus-lg' : 'pencil'} size={26} color='#4f46e5' /></View>
+              <Text className='card-title'>{editing === 'new' ? '新增 Provider' : '编辑 Provider'}</Text>
+            </View>
             <Text className='card-body'>OpenAI 兼容接口。Base URL 形如 https://api.deepseek.com/v1（无需 /chat/completions 后缀）。</Text>
 
             <View className='form-row'>
@@ -253,7 +267,10 @@ export default function SettingsPage() {
 
         {/* 高可用参数 */}
         <View className='card'>
-          <Text className='card-title'>高可用参数</Text>
+          <View className='flex items-center gap-sm'>
+            <View className='mini-icon'><Icon name='sliders' size={26} color='#f59e0b' /></View>
+            <Text className='card-title'>高可用参数</Text>
+          </View>
           <View className='form-row'>
             <Text className='form-label'>首 token 超时（秒）</Text>
             <Input className='input form-input' type='number' value={haForm.firstTokenTimeoutMs} onInput={(e) => setHaForm((f) => ({ ...f, firstTokenTimeoutMs: e.detail.value }))} />

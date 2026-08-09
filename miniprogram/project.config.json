@@ -2,7 +2,7 @@
   "miniprogramRoot": "./dist",
   "projectname": "tianji-miniprogram",
   "description": "天机 AI：本地八字排盘 + 高可用 AI 对话",
-  "appid": "touristappid",
+  "appid": "wx9b1013d33e8624e2",
   "setting": {
     "urlCheck": false,
     "es6": true,

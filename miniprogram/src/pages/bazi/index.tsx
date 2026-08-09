@@ -17,6 +17,7 @@ import { saveMarkdownFile, copyText } from '../../lib/export-file'
 import { Markdown } from '../../lib/markdown'
 import { genId, formatDate } from '../../lib/date'
 import { useTheme } from '../../lib/theme'
+import { Icon } from '../../components/ui/Icon'
 import type { BaziChart } from '../../lib/types'
 
 const WUXING_TEXT: Record<string, string> = {
@@ -407,7 +408,10 @@ export default function BaziPage() {
       <View className='page-pad'>
         {/* ===== 输入表单 ===== */}
         <View className='card'>
-          <Text className='card-title'>出生信息</Text>
+          <View className='flex items-center gap-sm'>
+            <View className='mini-icon'><Icon name='calendar3' size={26} color='#4f46e5' /></View>
+            <Text className='card-title'>出生信息</Text>
+          </View>
 
           <View className='form-row'>
             <Text className='form-label'>姓名</Text>
@@ -495,13 +499,19 @@ export default function BaziPage() {
 
           {lunarPreview && <Text className='lunar-preview'>{lunarPreview}</Text>}
 
-          <View className='btn btn-primary btn-block mt-md' onClick={doPaiPan}>开始排盘</View>
+          <View className='btn btn-primary btn-block mt-md' onClick={doPaiPan}>
+            <Icon name='magic' size={30} color='#ffffff' className='btn-icon' />
+            开始排盘
+          </View>
         </View>
 
         {/* ===== 历史 ===== */}
         <View className='flex items-center justify-between'>
           <Text className='text-sm text-secondary'>排盘历史（{history.length}/30）</Text>
-          <Text className='link' onClick={() => setShowHistory(!showHistory)}>{showHistory ? '收起' : '查看'}</Text>
+          <Text className='link' onClick={() => setShowHistory(!showHistory)}>
+            <Icon name={showHistory ? 'chevron-up' : 'chevron-down'} size={22} color='#4f46e5' />
+            {showHistory ? '收起' : '查看'}
+          </Text>
         </View>
         {showHistory && (
           <View className='card'>
@@ -526,7 +536,10 @@ export default function BaziPage() {
           <>
             <View className='card'>
               <View className='flex items-center justify-between'>
-                <Text className='card-title'>四柱排盘</Text>
+                <View className='flex items-center gap-sm'>
+                  <View className='mini-icon'><Icon name='clipboard-data' size={26} color='#4f46e5' /></View>
+                  <Text className='card-title'>四柱排盘</Text>
+                </View>
                 <Text className='text-sm text-secondary'>{chart.lunarText}</Text>
               </View>
               <View className='pillar-row'>
@@ -557,7 +570,10 @@ export default function BaziPage() {
             </View>
 
             <View className='card'>
-              <Text className='card-title'>五行力量</Text>
+              <View className='flex items-center gap-sm'>
+                <View className='mini-icon'><Icon name='flower1' size={26} color='#10b981' /></View>
+                <Text className='card-title'>五行力量</Text>
+              </View>
               {wuxingKeys.map((k) => (
                 <View key={k} className='wuxing-row'>
                   <Text className='wuxing-label' style={{ color: WUXING_TEXT[k] }}>{k}</Text>
@@ -570,7 +586,10 @@ export default function BaziPage() {
             </View>
 
             <View className='card'>
-              <Text className='card-title'>大运</Text>
+              <View className='flex items-center gap-sm'>
+                <View className='mini-icon'><Icon name='clock-history' size={26} color='#f59e0b' /></View>
+                <Text className='card-title'>大运</Text>
+              </View>
               <View className='table-scroll'>
                 <View className='tbl'>
                   <View className='tbl-row tbl-head'>
@@ -596,29 +615,43 @@ export default function BaziPage() {
         {/* ===== AI 分析 ===== */}
         {chart && (
           <View className='card'>
-            <Text className='card-title'>AI 命理分析</Text>
+            <View className='flex items-center gap-sm'>
+              <View className='mini-icon'><Icon name='journal-text' size={26} color='#7c3aed' /></View>
+              <Text className='card-title'>AI 命理分析</Text>
+            </View>
             {analysis === '' && !analyzing ? (
               <View className='btn btn-primary btn-block' onClick={() => void doAnalyze()}>
-                🔮 开始 AI 分析
+                <Icon name='magic' size={28} color='#ffffff' className='btn-icon' />
+                开始 AI 分析
               </View>
             ) : (
               <>
                 {analysis !== '' && <Markdown content={analysis} />}
                 {analyzing && (
                   <View className='chat-status'>
+                    <Icon name='stop-circle' size={24} color='#9ca3af' className='btn-icon' />
                     <Text className='text-muted text-sm'>{analysisStatus || '生成中…'}</Text>
                   </View>
                 )}
                 {!analyzing && (
                   <View className='flex gap-sm mt-md'>
-                    <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doAnalyze()}>重新分析</Button>
-                    <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doExportAnalysis()}>导出分析</Button>
+                    <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doAnalyze()}>
+                      <Icon name='arrow-repeat' size={24} color='#4f46e5' className='btn-icon' />
+                      重新分析
+                    </Button>
+                    <Button className='btn btn-outline btn-sm flex-1' onClick={() => void doExportAnalysis()}>
+                      <Icon name='download' size={24} color='#4f46e5' className='btn-icon' />
+                      导出分析
+                    </Button>
                   </View>
                 )}
               </>
             )}
             {chart && analysis !== '' && (
-              <Button className='btn btn-ghost btn-sm btn-block mt-sm' onClick={() => void doExport()}>导出完整排盘（Markdown）</Button>
+              <Button className='btn btn-ghost btn-sm btn-block mt-sm' onClick={() => void doExport()}>
+                <Icon name='file-earmark-text' size={24} color='#4f46e5' className='btn-icon' />
+                导出完整排盘（Markdown）
+              </Button>
             )}
           </View>
         )}

@@ -8,6 +8,8 @@ import { saveMarkdownFile, buildChatMarkdown, chatExportFileName, copyText } fro
 import { Markdown } from '../../lib/markdown'
 import { genId } from '../../lib/date'
 import { useTheme } from '../../lib/theme'
+import { Icon } from '../../components/ui/Icon'
+import { Empty } from '../../components/ui'
 import type { ChatMessage, ChatSession, Skill } from '../../lib/types'
 
 function buildSkillSystem(skill: Skill | null): string {
@@ -219,6 +221,7 @@ export default function ChatPage() {
       {/* 顶部工具条 */}
       <View className='chat-toolbar'>
         <Button className='btn btn-outline btn-sm' onClick={() => setShowSessions(!showSessions)}>
+          <Icon name='journal-text' size={26} color='#4f46e5' className='btn-icon' />
           {showSessions ? '收起' : '会话'}（{sessions.length}）
         </Button>
         <View className='flex items-center gap-sm'>
@@ -226,32 +229,43 @@ export default function ChatPage() {
           <Picker mode='selector' range={skillPickerRange} value={skillPickerIndex} onChange={(e) => switchSkill(Number(e.detail.value))}>
             <View className='skill-picker'>
               <Text className='skill-picker-text'>{skillPickerRange[skillPickerIndex] || '选择技能'}</Text>
-              <Text className='text-muted'>▾</Text>
+              <Icon name='chevron-down' size={22} color='#9ca3af' />
             </View>
           </Picker>
         </View>
         <View className='flex-1' />
         {streaming ? (
-          <Button className='btn btn-outline btn-sm' onClick={stop}>停止</Button>
+          <Button className='btn btn-outline btn-sm' onClick={stop}>
+            <Icon name='stop-circle' size={26} color='#4f46e5' className='btn-icon' />
+            停止
+          </Button>
         ) : (
           <Button className='btn btn-ghost btn-sm' onClick={() => { if (!streaming) { setMessages([]); setStatus('') } }}>
+            <Icon name='trash' size={24} color='#ef4444' />
             清空
           </Button>
         )}
         {messages.length > 0 && !streaming && (
-          <Button className='btn btn-ghost btn-sm' onClick={() => void doExportChat()}>导出</Button>
+          <Button className='btn btn-ghost btn-sm' onClick={() => void doExportChat()}>
+            <Icon name='download' size={24} color='#4f46e5' />
+            导出
+          </Button>
         )}
       </View>
 
       {/* 会话列表面板 */}
       {showSessions && (
         <View className='session-panel'>
-          <Button className='btn btn-primary btn-sm' onClick={startNewSession}>＋ 新建会话</Button>
+          <Button className='btn btn-primary btn-sm' onClick={startNewSession}>
+            <Icon name='plus-lg' size={24} color='#ffffff' className='btn-icon' />
+            新建会话
+          </Button>
           {sessions.length === 0 ? (
-            <Text className='text-muted'>暂无历史会话</Text>
+            <Empty icon='chat-dots' text='暂无历史会话' />
           ) : (
             sessions.slice(0, 20).map((s) => (
               <View key={s.id} className='session-item'>
+                <Icon name='chat-dots' size={26} color='#9ca3af' />
                 <View className='flex-1' onClick={() => openSession(s)}>
                   <Text className='session-title'>
                     {s.title}
@@ -271,9 +285,17 @@ export default function ChatPage() {
         <View className='chat-list'>
           {messages.length === 0 && (
             <View className='chat-empty'>
-              <Text className='chat-empty-title'>
-                {activeSkill ? `已启用技能「${activeSkill.name}」，它将按技能流程引导对话。` : '选择技能或直接开始对话；多 Provider 故障切换会自动生效。'}
-              </Text>
+              {activeSkill ? (
+                <>
+                  <Icon name='robot' size={80} color='#c7cbd6' />
+                  <Text className='chat-empty-title'>已启用技能「{activeSkill.name}」，它将按技能流程引导对话。</Text>
+                </>
+              ) : (
+                <>
+                  <Icon name='chat-dots' size={80} color='#c7cbd6' />
+                  <Text className='chat-empty-title'>选择技能或直接开始对话；多 Provider 故障切换会自动生效。</Text>
+                </>
+              )}
             </View>
           )}
           {messages.map((m, i) =>
@@ -285,7 +307,9 @@ export default function ChatPage() {
               </View>
             ) : (
               <View key={i} className='chat-row'>
-                <View className='chat-avatar'>AI</View>
+                <View className='chat-avatar'>
+                  <Icon name='robot' size={26} color='#4f46e5' />
+                </View>
                 <View className='chat-bubble'>
                   <Markdown content={m.content} />
                 </View>
@@ -318,6 +342,7 @@ export default function ChatPage() {
           className={`btn btn-primary chat-send ${!input.trim() || streaming ? 'btn-disabled' : ''}`}
           onClick={send}
         >
+          <Icon name='send' size={26} color='#ffffff' className='btn-icon' />
           发送
         </Button>
       </View>
