@@ -3,14 +3,15 @@
     <view
       wx:for="{{list}}"
       wx:key="pagePath"
-      class="tabbar-item {{selected === index ? 'tabbar-item-active' : ''}}"
+      class="tabbar-item {{selected == index ? 'tabbar-item-active' : ''}}"
       data-index="{{index}}"
       bindtap="switchTab"
     >
-      <view class="tabbar-icon {{selected === index ? 'tabbar-icon-active' : ''}}">
-        <text class="icon icon-{{item.icon}}"></text>
+      <view class="tabbar-icon {{selected == index ? 'tabbar-icon-active' : ''}}">
+        <image wx:if="{{selected == index}}" src="{{item.iconActive}}" class="tabbar-img" />
+        <image wx:else src="{{item.icon}}" class="tabbar-img" />
       </view>
-      <text class="tabbar-text {{selected === index ? 'tabbar-text-active' : ''}}">{{item.text}}</text>
+      <text class="tabbar-text {{selected == index ? 'tabbar-text-active' : ''}}">{{item.text}}</text>
     </view>
   </view>
   <view class="tabbar-safe"></view>

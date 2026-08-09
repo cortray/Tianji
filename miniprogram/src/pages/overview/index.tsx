@@ -8,7 +8,7 @@ import type { AppConfig } from '../../lib/types'
 import { Icon, type IconName } from '../../components/ui/Icon'
 import { Badge, Button } from '../../components/ui'
 
-export default function OverviewPage() {
+function OverviewPage() {
   const { themeClass } = useTheme()
   const [stats, setStats] = useState({ providers: 0, keys: 0, skills: 0 })
 
@@ -132,3 +132,6 @@ export default function OverviewPage() {
     </View>
   )
 }
+
+export default OverviewPage
+

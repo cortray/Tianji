@@ -27,7 +27,7 @@ function buildSkillSystem(skill: Skill | null): string {
   return s
 }
 
-export default function ChatPage() {
+function ChatPage() {
   const { themeClass } = useTheme()
   const [skills, setSkills] = useState<Skill[]>([])
   const [skillId, setSkillId] = useState('')
@@ -355,3 +355,6 @@ export default function ChatPage() {
     </View>
   )
 }
+
+export default ChatPage
+

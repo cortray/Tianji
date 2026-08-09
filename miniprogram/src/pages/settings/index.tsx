@@ -29,7 +29,7 @@ function emptyForm(): ProviderForm {
   }
 }
 
-export default function SettingsPage() {
+function SettingsPage() {
   const { theme, themeClass, setTheme } = useTheme()
   const [cfg, setCfg] = useState<AppConfig | null>(null)
   const [editing, setEditing] = useState<ProviderConfig | 'new' | null>(null)
@@ -287,3 +287,6 @@ sk-yyyyyyyy（每行一个，多个实现轮询容灾）'
     </ScrollView>
   )
 }
+
+export default SettingsPage
+

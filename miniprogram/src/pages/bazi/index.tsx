@@ -80,7 +80,7 @@ const DEFAULT_FORM: FormState = {
   longitude: '120'
 }
 
-export default function BaziPage() {
+function BaziPage() {
   const { themeClass } = useTheme()
   const [form, setForm] = useState<FormState>(DEFAULT_FORM)
   const [chart, setChart] = useState<BaziChart | null>(null)
@@ -650,3 +650,6 @@ export default function BaziPage() {
     </ScrollView>
   )
 }
+
+export default BaziPage
+

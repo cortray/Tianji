@@ -1,11 +1,13 @@
+const icons = require('./icons.gen.js')
+
 Component({
   data: {
     selected: 0,
     list: [
-      { pagePath: '/pages/overview/index', text: '概览', icon: 'grid' },
-      { pagePath: '/pages/bazi/index', text: '排盘', icon: 'calendar3' },
-      { pagePath: '/pages/chat/index', text: '对话', icon: 'chat-dots' },
-      { pagePath: '/pages/settings/index', text: '设置', icon: 'gear' }
+      { pagePath: '/pages/overview/index', text: '概览', icon: icons.grid.normal, iconActive: icons.grid.active },
+      { pagePath: '/pages/bazi/index', text: '排盘', icon: icons.calendar3.normal, iconActive: icons.calendar3.active },
+      { pagePath: '/pages/chat/index', text: '对话', icon: icons['chat-dots'].normal, iconActive: icons['chat-dots'].active },
+      { pagePath: '/pages/settings/index', text: '设置', icon: icons.gear.normal, iconActive: icons.gear.active }
     ]
   },
   lifetimes: {

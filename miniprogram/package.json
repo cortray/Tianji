@@ -40,6 +40,7 @@
     "@babel/core": "^7.24.4",
     "@babel/plugin-transform-class-properties": "7.25.9",
     "@babel/preset-react": "^7.24.1",
+    "@resvg/resvg-js": "^2.6.2",
     "@tarojs/cli": "4.2.1",
     "@tarojs/vite-runner": "4.2.1",
     "@types/node": "^18",
