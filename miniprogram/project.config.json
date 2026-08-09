@@ -1,0 +1,21 @@
+{
+  "miniprogramRoot": "./dist",
+  "projectname": "tianji-miniprogram",
+  "description": "天机 AI：本地八字排盘 + 高可用 AI 对话",
+  "appid": "touristappid",
+  "setting": {
+    "urlCheck": false,
+    "es6": true,
+    "enhance": true,
+    "compileHotReLoad": true,
+    "postcss": true,
+    "minified": true,
+    "babelSetting": {
+      "ignore": [],
+      "disablePlugins": [],
+      "outputPath": ""
+    }
+  },
+  "compileType": "miniprogram",
+  "libVersion": "3.0.0"
+}
