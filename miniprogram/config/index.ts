@@ -27,6 +27,10 @@ export default defineConfig<'vite'>(async (merge) => {
     },
     framework: 'react',
     compiler: 'vite',
+    // 修复：Taro 4.2.1 vite 生产构建默认 terser 压缩会破坏 taro.js 的
+    // reactExports（react hooks 转发），导致页面运行时 useState undefined。
+    // dev 构建不压缩所以正常；换用 esbuild 压缩（不重命名模块作用域变量）。
+    jsMinimizer: 'esbuild',
     mini: {
       postcss: {
         pxtransform: {
